@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>大一新生學習與生涯關懷問卷</title>
+<style>
+  :root{
+    --bg:#eef3f4; --card:#ffffff; --ink:#1d2b33; --muted:#5f6f79; --line:#d6e0e4;
+    --brand:#1d6b73; --brand-soft:#e4f1f2; --accent:#f0a33a;
+    --err:#c0392b; --warn:#7a5000; --warn-soft:#fff4dc;
+    --font:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Heiti TC",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  }
+  html:lang(ja){ --font:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Yu Gothic","Meiryo","Noto Sans JP",system-ui,sans-serif; }
+  html:lang(vi), html:lang(en){ --font:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Helvetica Neue",Arial,"Noto Sans TC","Microsoft JhengHei",sans-serif; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--font); font-size:16px; line-height:1.65; -webkit-text-size-adjust:100%; }
+  [hidden]{ display:none !important; }
+
+  .preview{ background:#263238; color:#fff; text-align:center; font-size:13px; padding:6px 12px; }
+
+  .langbar{ position:sticky; top:0; z-index:10; background:rgba(255,255,255,.94); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
+  .langbar .in{ max-width:720px; margin:0 auto; padding:8px 16px; display:flex; align-items:center; gap:6px; overflow-x:auto; scrollbar-width:none; }
+  .langbar .in::-webkit-scrollbar{ display:none; }
+  .globe{ font-size:18px; margin-right:2px; flex:none; }
+  .langbtn{ flex:none; font:inherit; font-size:14px; line-height:1.2; padding:7px 13px; border:1.5px solid var(--line); background:#fff; color:var(--ink); border-radius:999px; cursor:pointer; white-space:nowrap; }
+  .langbtn:hover{ border-color:#9cbcc1; }
+  .langbtn.on{ background:var(--brand); border-color:var(--brand); color:#fff; font-weight:600; }
+  .langbtn[lang="vi"], .langbtn[lang="en"]{ font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; }
+  .langbtn[lang="ja"]{ font-family:"Hiragino Sans","Yu Gothic UI","Meiryo","Noto Sans JP",sans-serif; }
+  .langbtn[lang="zh-Hant-TW"]{ font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif; }
+
+  .wrap{ max-width:720px; margin:0 auto; padding:16px 16px 40px; }
+  .card{ background:var(--card); border-radius:16px; padding:22px 20px; margin-bottom:16px; box-shadow:0 1px 2px rgba(0,0,0,.04),0 6px 20px rgba(29,107,115,.07); }
+  @media (min-width:600px){ .card{ padding:28px 30px; } }
+
+  .hero{ border-top:6px solid var(--brand); }
+  .eyebrow{ font-size:13px; color:var(--brand); font-weight:600; letter-spacing:.02em; }
+  h1{ font-size:clamp(22px,5.4vw,28px); line-height:1.3; margin:6px 0 12px; }
+  .teacher{ display:inline-flex; flex-wrap:wrap; gap:6px; align-items:center; background:var(--brand-soft); color:var(--brand); border-radius:999px; padding:5px 14px; font-size:15px; }
+  .teacher b{ font-weight:700; }
+  .intro p{ margin:12px 0; }
+  .facts{ list-style:none; padding:0; margin:14px 0; display:grid; gap:6px; color:var(--muted); font-size:15px; }
+  .zhnote{ background:var(--warn-soft); color:var(--warn); border-left:4px solid var(--accent); border-radius:10px; padding:10px 14px; font-weight:600; font-size:15px; }
+
+  .sec{ display:flex; align-items:center; gap:10px; font-size:14px; font-weight:700; color:var(--muted); margin:2px 0 16px; }
+  .sec::after{ content:""; flex:1; height:1px; background:var(--line); }
+  .sec.mt{ margin-top:30px; }
+
+  .q{ border:0; padding:0; margin:0 0 24px; min-width:0; }
+  .qt{ display:flex; gap:10px; align-items:flex-start; font-weight:700; font-size:17px; line-height:1.45; padding:0; margin:0 0 4px; }
+  .num{ flex:none; width:26px; height:26px; margin-top:-1px; border-radius:50%; background:var(--brand); color:#fff; font-size:14px; display:inline-grid; place-items:center; }
+  .req{ color:var(--err); margin-left:3px; }
+  .zhsub{ font-size:13px; color:var(--muted); margin:0 0 8px; }
+  .q.numbered > .zhsub, .q.numbered > .help{ margin-left:36px; }
+  .help{ font-size:13.5px; color:var(--muted); margin:0 0 8px; }
+  .lbl{ display:block; font-weight:700; font-size:16px; margin-bottom:6px; }
+  .lbl .zhsub{ display:block; font-weight:400; margin:0; }
+
+  .opts{ display:grid; gap:8px; grid-template-columns:1fr; margin-top:10px; }
+  @media (min-width:560px){ .opts.two{ grid-template-columns:1fr 1fr; } }
+  .opt{ position:relative; display:flex; align-items:center; gap:12px; padding:12px 14px; min-height:50px; border:1.5px solid var(--line); border-radius:12px; background:#fff; cursor:pointer; transition:border-color .15s,background .15s; -webkit-tap-highlight-color:transparent; line-height:1.4; }
+  .opt:hover{ border-color:#9cbcc1; }
+  .opt input{ position:absolute; opacity:0; width:1px; height:1px; pointer-events:none; }
+  .mark{ flex:none; width:22px; height:22px; border:2px solid #9fb2b8; border-radius:50%; display:grid; place-items:center; background:#fff; transition:all .15s; }
+  .opt.cb .mark{ border-radius:6px; }
+  .opt.on{ border-color:var(--brand); background:var(--brand-soft); }
+  .opt.on .mark{ border-color:var(--brand); background:var(--brand); }
+  .opt.on .mark::after{ content:""; width:8px; height:8px; border-radius:50%; background:#fff; }
+  .opt.cb.on .mark::after{ width:6px; height:11px; border-radius:0; background:none; border:solid #fff; border-width:0 2.5px 2.5px 0; transform:translateY(-1px) rotate(45deg); }
+  .opt:focus-within{ outline:3px solid rgba(29,107,115,.28); outline-offset:2px; }
+
+  .field{ margin:0 0 20px; }
+  .row2{ display:grid; gap:0 16px; grid-template-columns:1fr; }
+  @media (min-width:560px){ .row2{ grid-template-columns:1fr 1fr; } }
+  .in{ width:100%; font:inherit; font-size:16px; padding:12px 14px; border:1.5px solid var(--line); border-radius:12px; background:#fbfdfd; color:var(--ink); -webkit-appearance:none; appearance:none; }
+  .in:focus{ outline:none; border-color:var(--brand); box-shadow:0 0 0 3px rgba(29,107,115,.15); background:#fff; }
+  textarea.in{ min-height:100px; resize:vertical; }
+  .sub{ margin:12px 0 0 0; padding-left:14px; border-left:3px solid var(--brand-soft); }
+
+  .err{ display:none; color:var(--err); font-size:14px; font-weight:600; margin-top:6px; }
+  .bad .err{ display:block; }
+  .bad .opt, .bad .in{ border-color:#e3a19a; }
+  .hint{ display:none; margin-top:6px; font-size:14px; color:var(--warn); background:var(--warn-soft); padding:6px 10px; border-radius:8px; }
+  .hint.show{ display:block; }
+
+  .submit{ width:100%; font:inherit; font-size:18px; font-weight:700; padding:15px; border:0; border-radius:14px; background:var(--brand); color:#fff; cursor:pointer; box-shadow:0 4px 14px rgba(29,107,115,.28); margin-top:6px; }
+  .submit:hover{ background:#175a61; }
+  .submit:disabled{ opacity:.6; cursor:wait; }
+  .formerr{ color:var(--err); text-align:center; margin:10px 0 0; font-weight:600; min-height:1.4em; }
+
+  .done{ text-align:center; padding:40px 24px; }
+  .done .big{ font-size:52px; line-height:1; }
+  .done h2{ font-size:24px; margin:14px 0 8px; }
+  .done p{ color:var(--muted); margin:0 0 20px; }
+  .linkbtn{ font:inherit; font-size:15px; background:none; border:1.5px solid var(--line); color:var(--brand); border-radius:999px; padding:9px 18px; cursor:pointer; }
+
+  footer{ text-align:center; color:var(--muted); font-size:13px; padding:4px 8px; }
+</style>
+</head>
+<body>
+<div class="preview" id="previewBar" hidden data-i18n="preview"></div>
+
+<nav class="langbar" aria-label="Language">
+  <div class="in">
+    <span class="globe" aria-hidden="true">🌐</span>
+    <button type="button" class="langbtn" data-lang="zh" lang="zh-Hant-TW">中文</button>
+    <button type="button" class="langbtn" data-lang="vi" lang="vi">Tiếng Việt</button>
+    <button type="button" class="langbtn" data-lang="ja" lang="ja">日本語</button>
+    <button type="button" class="langbtn" data-lang="en" lang="en">English</button>
+  </div>
+</nav>
+
+<main class="wrap">
+  <header class="card hero">
+    <div class="eyebrow" data-i18n="eyebrow"></div>
+    <h1 data-i18n="title"></h1>
+    <div class="teacher"><span data-i18n="teacherLabel"></span><b>李振偉老師</b></div>
+    <div class="intro" data-i18n-html="intro"></div>
+    <ul class="facts">
+      <li data-i18n="fact1"></li>
+      <li data-i18n="fact2"></li>
+      <li data-i18n="fact3"></li>
+    </ul>
+    <div class="zhnote" data-i18n="zhNote"></div>
+  </header>
+
+  <form class="card" id="form" novalidate autocomplete="off">
+    <div class="sec" data-i18n="secBasic"></div>
+    <div class="row2">
+      <div class="field" id="f-sid">
+        <label class="lbl" for="sid"><span data-i18n="sid"></span><span class="req">*</span></label>
+        <input class="in" id="sid" name="sid" inputmode="numeric" maxlength="9" data-i18n-ph="sidPh">
+        <div class="err" data-err></div>
+      </div>
+      <div class="field" id="f-name">
+        <label class="lbl" for="name"><span data-i18n="name"></span><span class="req">*</span></label>
+        <input class="in" id="name" name="name" maxlength="40" data-i18n-ph="namePh" data-zh-check="name">
+        <div class="err" data-err></div>
+        <div class="hint" data-hint></div>
+      </div>
+    </div>
+    <div class="field" id="f-contact">
+      <label class="lbl" for="contact" data-i18n="contact"></label>
+      <input class="in" id="contact" name="contact" maxlength="60" data-i18n-ph="contactPh">
+    </div>
+
+    <div class="sec mt" data-i18n="secNow"></div>
+    <div id="questions"></div>
+
+    <div class="field" id="f-msg">
+      <label class="lbl" for="msg"><span data-i18n="msg"></span><span class="zhsub" data-zh="msg"></span></label>
+      <textarea class="in" id="msg" name="msg" maxlength="1000" data-i18n-ph="msgPh" data-zh-check="text"></textarea>
+      <div class="hint" data-hint></div>
+    </div>
+
+    <button type="submit" class="submit" id="submitBtn" data-i18n="submit"></button>
+    <p class="formerr" id="formErr" role="alert"></p>
+  </form>
+
+  <section class="card done" id="done" hidden>
+    <div class="big">🙏</div>
+    <h2 data-i18n="doneTitle"></h2>
+    <p data-i18n-html="doneText"></p>
+    <button type="button" class="linkbtn" id="againBtn" data-i18n="again"></button>
+  </section>
+
+  <footer data-i18n="footer"></footer>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ───────── 四種語言文字 ───────── */
+  var I18N = {
+    zh: {
+      preview: '預覽模式：資料不會真的送出',
+      eyebrow: '景文科技大學｜115 學年度大一新生關懷',
+      title: '大一新生學習與生涯關懷問卷',
+      teacherLabel: '職涯輔導老師',
+      intro: '<p>同學你好！我是你的職涯輔導老師——<b>李振偉老師</b>。</p><p>學校在 9 月請大一新生做了 UCAN 職能測驗（教育部的職業興趣探索平台），也請職涯輔導老師關心大家剛進大學的學習與生活適應。老師想了解你目前的狀況，看看有沒有可以幫忙的地方。</p>',
+      fact1: '⏱ 約 2 分鐘，大部分只要點選',
+      fact2: '🔒 你的回答只有職涯輔導老師與學輔中心看得到，不會公開',
+      fact3: '💬 沒有標準答案，照你真實的感覺填就好',
+      zhNote: '✍️ 需要打字的地方，請用中文回答（簡短即可）',
+      secBasic: '基本資料', secNow: '你的近況',
+      sid: '學號', sidPh: '9 位數字',
+      name: '中文姓名', namePh: '與學校名單相同的中文姓名',
+      contact: '聯絡方式（選填）', contactPh: 'LINE ID 或手機號碼',
+      q1: '你喜歡目前就讀的科系嗎？',
+      q1_like: '很喜歡', q1_ok: '還可以', q1_dislike: '不太喜歡', q1_unsure: '還不確定',
+      q2: '上課內容跟得上嗎？',
+      q2_fine: '跟得上', q2_abit: '有點吃力', q2_hard: '很吃力',
+      q4: '目前最希望得到哪方面的幫助？', q4help: '可複選',
+      q4_study: '課業學習', q4_career: '未來職涯方向', q4_transferinfo: '轉系或轉學資訊',
+      q4_life: '生活或經濟', q4_mood: '心情或壓力', q4_chinese: '中文能力', q4_none: '目前不需要',
+      q5: '想跟李振偉老師聊聊嗎？',
+      q5_meet: '想，約時間當面聊', q5_chat: '想，用 LINE 或電話聊', q5_no: '目前不用，有需要再找老師',
+      time: '方便的時間（選填）', timePh: '例：週三下午、週五晚上',
+      msg: '還有什麼想跟老師說的嗎？（選填）', msgPh: '例如：最近的困擾、想問的問題……（請用中文）',
+      submit: '送出', sending: '送出中…',
+      required: '這題還沒填喔', sidFormat: '學號是 9 位數字',
+      nameHan: '請填寫中文姓名（與學校名單相同）。如果真的無法輸入中文，再按一次「送出」即可。',
+      zhHint: '提醒：請用中文回答 🙏',
+      fixAbove: '還有題目沒填完，請看紅色提示',
+      netErr: '送出失敗，請檢查網路後再試一次。',
+      doneTitle: '謝謝你！',
+      doneText: '老師已經收到你的回覆，如果有需要會再跟你聯絡。<br>有任何困擾，隨時都可以找李振偉老師，或學輔中心的專業輔導老師聊聊。',
+      again: '填錯了？回去修改後再送出一次（以最新一次為準）',
+      footer: '職涯輔導老師：李振偉老師　｜　資料僅用於本學期的學習與生涯關懷'
+    },
+    vi: {
+      preview: 'Chế độ xem trước: dữ liệu sẽ không được gửi',
+      eyebrow: '景文科技大學 · Năm học 115 (2026–2027) · Quan tâm tân sinh viên',
+      title: 'Khảo sát về học tập và định hướng nghề nghiệp dành cho sinh viên năm nhất',
+      teacherLabel: 'Giảng viên hướng nghiệp',
+      intro: '<p>Chào bạn! Bảng khảo sát này do giảng viên hướng nghiệp (職涯輔導老師) của bạn là <b>李振偉老師</b> (Lý Chấn Vĩ) gửi đến.</p><p>Tháng 9 vừa qua, nhà trường đã cho sinh viên năm nhất làm bài trắc nghiệm UCAN (nền tảng khám phá sở thích nghề nghiệp của Bộ Giáo dục Đài Loan), đồng thời nhờ các giảng viên hướng nghiệp quan tâm đến việc học tập và thích nghi với cuộc sống đại học của các bạn. Giảng viên muốn biết tình hình hiện tại của bạn và xem có thể giúp gì cho bạn.</p>',
+      fact1: '⏱ Khoảng 2 phút, phần lớn chỉ cần chọn',
+      fact2: '🔒 Chỉ giảng viên hướng nghiệp và Trung tâm Tư vấn Sinh viên (學輔中心) xem được câu trả lời, không công khai',
+      fact3: '💬 Không có câu trả lời đúng hay sai, hãy trả lời theo cảm nhận thật của bạn',
+      zhNote: '✍️ Những ô cần nhập chữ, vui lòng trả lời bằng tiếng Trung (請用中文回答), ngắn gọn cũng được',
+      secBasic: 'Thông tin cơ bản', secNow: 'Tình hình hiện tại',
+      sid: 'Mã số sinh viên (學號)', sidPh: '9 chữ số',
+      name: 'Họ tên tiếng Trung (中文姓名)', namePh: 'Giống danh sách của trường',
+      contact: 'Thông tin liên lạc (không bắt buộc)', contactPh: 'LINE ID hoặc số điện thoại',
+      q1: 'Bạn có thích ngành đang học không?',
+      q1_like: 'Rất thích', q1_ok: 'Bình thường', q1_dislike: 'Không thích lắm', q1_unsure: 'Chưa chắc',
+      q2: 'Bạn có theo kịp nội dung bài học không?',
+      q2_fine: 'Theo kịp', q2_abit: 'Hơi vất vả', q2_hard: 'Rất vất vả',
+      q4: 'Hiện tại bạn cần được hỗ trợ về mặt nào nhất?', q4help: 'Có thể chọn nhiều',
+      q4_study: 'Việc học', q4_career: 'Định hướng nghề nghiệp', q4_transferinfo: 'Thông tin chuyển ngành / chuyển trường',
+      q4_life: 'Cuộc sống hoặc tài chính', q4_mood: 'Tâm trạng hoặc áp lực', q4_chinese: 'Tiếng Trung', q4_none: 'Hiện chưa cần',
+      q5: 'Bạn có muốn trò chuyện với 李振偉老師 không?',
+      q5_meet: 'Có, hẹn gặp trực tiếp', q5_chat: 'Có, qua LINE hoặc điện thoại', q5_no: 'Hiện chưa cần, khi cần sẽ liên hệ',
+      time: 'Thời gian thuận tiện (không bắt buộc)', timePh: 'Ví dụ: 週三下午 (chiều thứ Tư)',
+      msg: 'Bạn còn điều gì muốn nói với giảng viên không? (không bắt buộc)', msgPh: 'Ví dụ: khó khăn gần đây, câu hỏi… (vui lòng viết bằng tiếng Trung)',
+      submit: 'Gửi', sending: 'Đang gửi…',
+      required: 'Bạn chưa trả lời câu này', sidFormat: 'Mã số sinh viên gồm 9 chữ số',
+      nameHan: 'Vui lòng nhập họ tên tiếng Trung (giống danh sách của trường). Nếu không thể gõ tiếng Trung, hãy bấm "Gửi" thêm một lần nữa.',
+      zhHint: 'Nhắc nhẹ: vui lòng viết bằng tiếng Trung (請用中文回答) 🙏',
+      fixAbove: 'Vẫn còn câu chưa trả lời, vui lòng xem dòng chữ màu đỏ',
+      netErr: 'Gửi không thành công. Vui lòng kiểm tra kết nối mạng và thử lại.',
+      doneTitle: 'Cảm ơn bạn!',
+      doneText: 'Giảng viên đã nhận được câu trả lời của bạn và sẽ liên lạc lại nếu cần.<br>Nếu có bất kỳ khó khăn nào, bạn luôn có thể tìm 李振偉老師 hoặc các chuyên viên tư vấn của Trung tâm Tư vấn Sinh viên (學輔中心).',
+      again: 'Điền sai? Quay lại sửa và gửi lại (lấy lần gửi mới nhất)',
+      footer: 'Giảng viên hướng nghiệp: 李振偉老師 | Thông tin chỉ dùng để hỗ trợ học tập và hướng nghiệp trong học kỳ này'
+    },
+    ja: {
+      preview: 'プレビューモード：データは送信されません',
+      eyebrow: '景文科技大學｜115学年度（2026年度）新入生サポート',
+      title: '1年生 学習・キャリアに関するアンケート',
+      teacherLabel: 'キャリア指導担当',
+      intro: '<p>こんにちは！あなたのキャリア指導担当教員（職涯輔導老師）、<b>李振偉先生</b>からのアンケートです。</p><p>学校では9月に1年生を対象に UCAN 職能テスト（台湾教育部の職業興味診断プラットフォーム）を実施し、キャリア指導担当の先生が、大学での勉強や生活に慣れてきたかを見守ることになっています。今の様子を教えてもらい、何か力になれることがないか知りたいと思っています。</p>',
+      fact1: '⏱ 約2分、ほとんど選ぶだけです',
+      fact2: '🔒 回答を見るのはキャリア指導担当の先生と学生相談センター（學輔中心）だけで、公開されません',
+      fact3: '💬 正解はありません。今の気持ちのまま答えてください',
+      zhNote: '✍️ 文字を入力する欄は、中国語で回答してください（請用中文回答）。短くて大丈夫です',
+      secBasic: '基本情報', secNow: '最近の様子',
+      sid: '学籍番号（學號）', sidPh: '9桁の数字',
+      name: '中国語の氏名（中文姓名）', namePh: '学校の名簿と同じ中国語表記',
+      contact: '連絡先（任意）', contactPh: 'LINE ID または携帯番号',
+      q1: '今の学科は好きですか？',
+      q1_like: 'とても好き', q1_ok: 'まあまあ', q1_dislike: 'あまり好きではない', q1_unsure: 'まだわからない',
+      q2: '授業の内容についていけていますか？',
+      q2_fine: 'ついていけている', q2_abit: '少し大変', q2_hard: 'とても大変',
+      q4: '今、どんなサポートがほしいですか？', q4help: '複数選択できます',
+      q4_study: '授業・勉強', q4_career: '将来の進路・キャリア', q4_transferinfo: '転科・転学の情報',
+      q4_life: '生活・経済面', q4_mood: '気持ち・ストレス', q4_chinese: '中国語', q4_none: '今は特にない',
+      q5: '李振偉先生と話してみたいですか？',
+      q5_meet: 'はい、直接会って話したい', q5_chat: 'はい、LINEか電話で話したい', q5_no: '今は大丈夫、必要なときに連絡します',
+      time: '都合のよい時間（任意）', timePh: '例：週三下午（水曜の午後）',
+      msg: '先生に伝えたいことはありますか？（任意）', msgPh: '例：最近困っていること、聞きたいこと…（中国語で）',
+      submit: '送信する', sending: '送信中…',
+      required: 'この質問にまだ回答していません', sidFormat: '学籍番号は9桁の数字です',
+      nameHan: '中国語の氏名（学校の名簿と同じ）を入力してください。どうしても中国語が入力できない場合は、もう一度「送信する」を押してください。',
+      zhHint: 'ひとこと：中国語で書いてください（請用中文回答）🙏',
+      fixAbove: 'まだ回答していない質問があります（赤い表示を確認してください）',
+      netErr: '送信できませんでした。通信環境を確認して、もう一度お試しください。',
+      doneTitle: 'ありがとうございました！',
+      doneText: '回答は先生に届きました。必要に応じて先生から連絡します。<br>困ったことがあれば、いつでも李振偉先生や学生相談センター（學輔中心）のカウンセラーに相談してください。',
+      again: '間違えた場合は、戻って修正し、もう一度送信してください（最新の回答が有効です）',
+      footer: 'キャリア指導担当：李振偉先生 ｜ 回答は今学期の学習・キャリア支援のためだけに使います'
+    },
+    en: {
+      preview: 'Preview mode: nothing will be submitted',
+      eyebrow: '景文科技大學 · Academic Year 2026–27 · First-year check-in',
+      title: 'First-Year Study & Career Check-in',
+      teacherLabel: 'Career mentor',
+      intro: '<p>Hi! This short survey is from your career mentor (職涯輔導老師), <b>李振偉老師</b>.</p><p>In September, first-year students took the UCAN assessment (the Taiwan Ministry of Education’s career-interest platform), and career mentors were asked to check in on how new students are settling into their studies and university life. We’d like to know how you’re doing and whether there’s anything we can help with.</p>',
+      fact1: '⏱ About 2 minutes — mostly tapping',
+      fact2: '🔒 Only your career mentor and the Student Counseling Center (學輔中心) can see your answers. They won’t be made public',
+      fact3: '💬 There are no right or wrong answers — just answer honestly',
+      zhNote: '✍️ For fields where you type, please answer in Chinese (請用中文回答). Short answers are fine',
+      secBasic: 'Basic info', secNow: 'How you’re doing',
+      sid: 'Student ID (學號)', sidPh: '9 digits',
+      name: 'Name in Chinese (中文姓名)', namePh: 'Same as on the school list',
+      contact: 'Contact (optional)', contactPh: 'LINE ID or mobile number',
+      q1: 'Do you like your current department?',
+      q1_like: 'Very much', q1_ok: 'It’s OK', q1_dislike: 'Not really', q1_unsure: 'Not sure yet',
+      q2: 'Can you keep up with your classes?',
+      q2_fine: 'Yes, I can', q2_abit: 'A bit hard', q2_hard: 'Very hard',
+      q4: 'What kind of help would you like right now?', q4help: 'Choose all that apply',
+      q4_study: 'Studies', q4_career: 'Career direction', q4_transferinfo: 'Info on changing department / school',
+      q4_life: 'Daily life or finances', q4_mood: 'Mood or stress', q4_chinese: 'Chinese language', q4_none: 'None for now',
+      q5: 'Would you like to talk with 李振偉老師?',
+      q5_meet: 'Yes, meet in person', q5_chat: 'Yes, via LINE or phone', q5_no: 'Not now — I’ll reach out if needed',
+      time: 'Convenient times (optional)', timePh: 'e.g. 週三下午 (Wed afternoon)',
+      msg: 'Anything else you’d like to tell your mentor? (optional)', msgPh: 'e.g. recent worries, questions… (please write in Chinese)',
+      submit: 'Submit', sending: 'Sending…',
+      required: 'Please answer this question', sidFormat: 'Student ID should be 9 digits',
+      nameHan: 'Please enter your Chinese name (as on the school list). If you really can’t type Chinese, just press Submit again.',
+      zhHint: 'Reminder: please write in Chinese (請用中文回答) 🙏',
+      fixAbove: 'Some questions still need an answer — see the red notes',
+      netErr: 'Couldn’t submit. Please check your connection and try again.',
+      doneTitle: 'Thank you!',
+      doneText: 'Your mentor has received your response and will contact you if needed.<br>If anything is bothering you, you can always talk to 李振偉老師 or the counselors at the Student Counseling Center (學輔中心).',
+      again: 'Made a mistake? Go back, fix it and submit again (the latest response counts)',
+      footer: 'Career mentor: 李振偉老師 | Your answers are used only for this semester’s study and career support'
+    }
+  };
+  var HTML_LANG = { zh: 'zh-Hant-TW', vi: 'vi', ja: 'ja', en: 'en' };
+
+  /* ───────── 題目 ───────── */
+  var QUESTIONS = [
+    { id: 'q1', type: 'radio', opts: ['like', 'ok', 'dislike', 'unsure'], two: true },
+    { id: 'q2', type: 'radio', opts: ['fine', 'abit', 'hard'] },
+    { id: 'q4', type: 'check', opts: ['study', 'career', 'transferinfo', 'life', 'mood', 'chinese', 'none'], two: true, help: 'q4help' },
+    { id: 'q5', type: 'radio', opts: ['meet', 'chat', 'no'] }
+  ];
+
+  var HAN = /[㐀-鿿豈-﫿]/;
+  var KANA = /[぀-ヿ]/;
+  var LATIN = /[A-Za-zÀ-ɏḀ-ỿ]/;
+
+  var lang = 'zh';
+  var nameWarned = false;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var t = function (k) { return (I18N[lang] && I18N[lang][k]) || I18N.zh[k] || ''; };
+
+  // Apps Script 網頁應用程式網址（問卷頁放在 GitHub Pages 時，資料送到這裡）
+  var API_URL = 'https://script.google.com/macros/s/AKfycbyBi5o1ETKAlYGDGo_lwMVgaS2Uz__WujcQOA_S0tEYUOzpAVnAFWAGG8z1kLBrcz3b/exec';
+
+  var hasGAS = !!(window.google && google.script && google.script.run);
+  var forcePreview = false;
+  try { forcePreview = new URLSearchParams(location.search).get('preview') === '1'; } catch (e) {}
+  var isPreview = !hasGAS && (forcePreview || !API_URL);
+
+  /* ───────── 產生題目 ───────── */
+  function el(tag, cls, attrs) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (attrs) for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  function buildQuestions() {
+    var host = $('#questions');
+    QUESTIONS.forEach(function (q, idx) {
+      var fs = el('fieldset', 'q numbered', { id: 'f-' + q.id });
+      var lg = el('legend', 'qt');
+      var num = el('span', 'num'); num.textContent = idx + 1;
+      var txt = el('span'); txt.setAttribute('data-i18n', q.id);
+      var req = el('span', 'req'); req.textContent = '*';
+      var wrapTxt = el('span'); wrapTxt.appendChild(txt); wrapTxt.appendChild(req);
+      lg.appendChild(num); lg.appendChild(wrapTxt);
+      fs.appendChild(lg);
+      var zs = el('div', 'zhsub', { 'data-zh': q.id }); fs.appendChild(zs);
+      if (q.help) { var h = el('div', 'help', { 'data-i18n': q.help }); fs.appendChild(h); }
+
+      var box = el('div', 'opts' + (q.two ? ' two' : ''));
+      q.opts.forEach(function (o) {
+        var lab = el('label', 'opt' + (q.type === 'check' ? ' cb' : ''));
+        var inp = el('input', null, { type: q.type === 'check' ? 'checkbox' : 'radio', name: q.id, value: o });
+        var mk = el('span', 'mark', { 'aria-hidden': 'true' });
+        var sp = el('span', null, { 'data-i18n': q.id + '_' + o });
+        lab.appendChild(inp); lab.appendChild(mk); lab.appendChild(sp);
+        box.appendChild(lab);
+      });
+      fs.appendChild(box);
+      var er = el('div', 'err', { 'data-err': '' }); fs.appendChild(er);
+
+      if (q.id === 'q5') {
+        var sub = el('div', 'sub', { id: 'timeBox', hidden: '' });
+        sub.innerHTML =
+          '<label class="lbl" for="time" style="font-size:15px"><span data-i18n="time"></span><span class="zhsub" data-zh="time"></span></label>' +
+          '<input class="in" id="time" name="time" maxlength="120" data-i18n-ph="timePh" data-zh-check="text">' +
+          '<div class="hint" data-hint></div>';
+        fs.appendChild(sub);
+      }
+      host.appendChild(fs);
+    });
+  }
+
+  /* ───────── 語言切換 ───────── */
+  function setLang(l, save) {
+    if (!I18N[l]) l = 'zh';
+    lang = l;
+    document.documentElement.lang = HTML_LANG[l];
+    document.title = t('title');
+    $$('[data-i18n]').forEach(function (e) { e.textContent = t(e.getAttribute('data-i18n')); });
+    $$('[data-i18n-html]').forEach(function (e) { e.innerHTML = t(e.getAttribute('data-i18n-html')); });
+    $$('[data-i18n-ph]').forEach(function (e) { e.placeholder = t(e.getAttribute('data-i18n-ph')); });
+    $$('[data-zh]').forEach(function (e) {
+      e.textContent = l === 'zh' ? '' : I18N.zh[e.getAttribute('data-zh')];
+      e.hidden = l === 'zh';
+    });
+    $$('.langbtn').forEach(function (b) {
+      var on = b.getAttribute('data-lang') === l;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    // 重新顯示目前的錯誤／提示文字
+    $$('.bad').forEach(function (f) { var e = $('[data-err]', f); if (e && e.getAttribute('data-k')) e.textContent = t(e.getAttribute('data-k')); });
+    $$('[data-zh-check]').forEach(checkZh);
+    if ($('#formErr').getAttribute('data-k')) $('#formErr').textContent = t($('#formErr').getAttribute('data-k'));
+    if (save) { try { localStorage.setItem('careForm.lang', l); } catch (e) {} }
+  }
+
+  function initialLang() {
+    var l = null;
+    try { l = new URLSearchParams(location.search).get('lang'); } catch (e) {}
+    if (!I18N[l]) { try { l = localStorage.getItem('careForm.lang'); } catch (e) {} }
+    if (!I18N[l]) {
+      var nav = (navigator.language || '').toLowerCase();
+      l = nav.indexOf('vi') === 0 ? 'vi' : nav.indexOf('ja') === 0 ? 'ja' : 'zh';
+    }
+    return l;
+  }
+
+  /* ───────── 中文提醒 ───────── */
+  function needsZh(s) {
+    s = (s || '').trim();
+    if (!s) return false;
+    return KANA.test(s) || (!HAN.test(s) && LATIN.test(s));
+  }
+  function checkZh(inp) {
+    var hint = $('[data-hint]', inp.parentNode);
+    if (!hint) return;
+    var kind = inp.getAttribute('data-zh-check');
+    var v = inp.value.trim();
+    var show = kind === 'name' ? (v && (!HAN.test(v) || KANA.test(v))) : needsZh(v);
+    hint.textContent = kind === 'name' ? t('nameHan') : t('zhHint');
+    hint.classList.toggle('show', !!show);
+  }
+
+  /* ───────── 選項互動 ───────── */
+  function syncOpts(name) {
+    $$('input[name="' + name + '"]').forEach(function (i) { i.parentNode.classList.toggle('on', i.checked); });
+  }
+
+  function onChange(e) {
+    var inp = e.target;
+    if (!inp.name) return;
+    if (inp.name === 'q4' && inp.checked) {
+      if (inp.value === 'none') $$('input[name="q4"]').forEach(function (i) { if (i !== inp) i.checked = false; });
+      else { var n = $('input[name="q4"][value="none"]'); if (n) n.checked = false; }
+    }
+    if (inp.type === 'radio' || inp.type === 'checkbox') syncOpts(inp.name);
+    if (inp.name === 'q5') $('#timeBox').hidden = !(inp.value === 'meet' || inp.value === 'chat');
+    var f = inp.closest('.q, .field');
+    if (f && f.classList.contains('bad')) validateOne(f.id);
+  }
+
+  /* ───────── 驗證 ───────── */
+  function collect() {
+    var val = function (n) { var c = $('input[name="' + n + '"]:checked'); return c ? c.value : ''; };
+    return {
+      sid: $('#sid').value.trim(),
+      name: $('#name').value.trim(),
+      contact: $('#contact').value.trim(),
+      q1: val('q1'), q2: val('q2'), q5: val('q5'),
+      q4: $$('input[name="q4"]:checked').map(function (i) { return i.value; }),
+      time: $('#timeBox').hidden ? '' : $('#time').value.trim(),
+      msg: $('#msg').value.trim(),
+      lang: lang
+    };
+  }
+
+  function mark(id, key) {
+    var f = document.getElementById(id);
+    var e = $('[data-err]', f);
+    if (key) { f.classList.add('bad'); e.setAttribute('data-k', key); e.textContent = t(key); }
+    else { f.classList.remove('bad'); e.removeAttribute('data-k'); e.textContent = ''; }
+    return !key;
+  }
+
+  function validateOne(id) {
+    var d = collect();
+    switch (id) {
+      case 'f-sid': return mark(id, !d.sid ? 'required' : (/^\d{9}$/.test(d.sid) ? null : 'sidFormat'));
+      case 'f-name': return mark(id, d.name ? null : 'required');
+      case 'f-q4': return mark(id, d.q4.length ? null : 'required');
+      default:
+        var q = id.replace('f-', '');
+        return mark(id, d[q] ? null : 'required');
+    }
+  }
+
+  function validateAll() {
+    var ids = ['f-sid', 'f-name', 'f-q1', 'f-q2', 'f-q4', 'f-q5'];
+    var firstBad = null;
+    ids.forEach(function (id) { if (!validateOne(id) && !firstBad) firstBad = document.getElementById(id); });
+    return firstBad;
+  }
+
+  function setFormErr(key) {
+    var fe = $('#formErr');
+    if (key) { fe.setAttribute('data-k', key); fe.textContent = t(key); }
+    else { fe.removeAttribute('data-k'); fe.textContent = ''; }
+  }
+
+  /* ───────── 送出 ───────── */
+  function send(payload) {
+    return new Promise(function (resolve, reject) {
+      if (hasGAS) {
+        google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).submitForm(payload);
+      } else if (!isPreview) {
+        // text/plain 為「簡單請求」，不需預檢；credentials:'omit' 不帶任何 Google 登入 cookie
+        fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload),
+          credentials: 'omit',
+          redirect: 'follow'
+        }).then(function (r) { return r.json(); }).then(function (res) {
+          if (res && res.ok) resolve(res); else reject(new Error((res && res.error) || 'submit failed'));
+        }, reject);
+      } else {
+        console.log('[預覽模式] 將送出的資料：', payload);
+        window.__lastPayload = payload;
+        setTimeout(function () { resolve({ ok: true, preview: true }); }, 500);
+      }
+    });
+  }
+
+  function onSubmit(e) {
+    e.preventDefault();
+    setFormErr(null);
+    var bad = validateAll();
+    if (bad) {
+      setFormErr('fixAbove');
+      bad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    var nameInp = $('#name');
+    var nm = nameInp.value.trim();
+    if ((!HAN.test(nm) || KANA.test(nm)) && !nameWarned) {
+      nameWarned = true;
+      checkZh(nameInp);
+      nameInp.closest('.field').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      try { nameInp.focus({ preventScroll: true }); } catch (err) { nameInp.focus(); }
+      return;
+    }
+    var btn = $('#submitBtn');
+    btn.disabled = true;
+    btn.textContent = t('sending');
+    send(collect()).then(function () {
+      $('#form').hidden = true;
+      $('#done').hidden = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, function (err) {
+      console.error(err);
+      setFormErr('netErr');
+    }).then(function () {
+      btn.disabled = false;
+      btn.textContent = t('submit');
+    });
+  }
+
+  /* ───────── 啟動 ───────── */
+  buildQuestions();
+
+  $$('.langbtn').forEach(function (b) {
+    b.addEventListener('click', function () { setLang(b.getAttribute('data-lang'), true); });
+  });
+
+  var form = $('#form');
+  form.addEventListener('change', onChange);
+  form.addEventListener('submit', onSubmit);
+
+  $('#sid').addEventListener('input', function () {
+    var v = this.value.replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); }).replace(/\D/g, '').slice(0, 9);
+    if (v !== this.value) this.value = v;
+    if (this.closest('.field').classList.contains('bad') && /^\d{9}$/.test(v)) validateOne('f-sid');
+  });
+  $('#name').addEventListener('input', function () {
+    nameWarned = false;
+    if (this.closest('.field').classList.contains('bad')) validateOne('f-name');
+  });
+  $$('[data-zh-check]').forEach(function (inp) {
+    inp.addEventListener('blur', function () { checkZh(inp); });
+    inp.addEventListener('input', function () {
+      var hint = $('[data-hint]', inp.parentNode);
+      if (hint && hint.classList.contains('show')) checkZh(inp);
+    });
+  });
+
+  $('#againBtn').addEventListener('click', function () {
+    $('#done').hidden = true;
+    $('#form').hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  setLang(initialLang(), false);
+  if (isPreview) $('#previewBar').hidden = false;
+
+  // 在 Apps Script 中支援 ?lang=vi 這類網址參數
+  if (hasGAS && google.script.url) {
+    google.script.url.getLocation(function (loc) {
+      var l = loc && loc.parameter && loc.parameter.lang;
+      if (I18N[l]) setLang(l, false);
+    });
+  }
+})();
+</script>
+</body>
+</html>
